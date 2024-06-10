@@ -51,7 +51,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           # Name of the Azure Web App
-          app-name: go-azure-appservice
+          app-name: go-azure-ait-test
           # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
           package: build/
           
