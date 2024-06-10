@@ -38,10 +38,6 @@ jobs:
       id-token: write #This is required for requesting the JWT
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: .net-app
       
       - name: Login to Azure
         uses: azure/login@v1
@@ -54,7 +50,8 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'go-azure-ait-test'
-          slot-name: 'Production'
-          package: .
+          # Name of the Azure Web App
+          app-name: go-azure-appservice
+          # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
+          package: build/
           
