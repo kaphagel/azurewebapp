@@ -24,6 +24,14 @@ jobs:
       - name: Test
         run: go test
 
+      - name: Archive build artifacts
+        run: |
+          mkdir -p build/zip
+          cp build/go-app.exe build/zip/
+          cd build/zip
+          zip -r ../go-app.zip ./*
+        shell: bash
+
   deploy:
     runs-on: windows-latest
     needs: build
@@ -48,4 +56,4 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: go-azure-ait-test # Replace with your Azure Web App name
-          package: build/
+          package: build/go-app.zip
