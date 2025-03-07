@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - go-azure-ait-test
+name: Build and deploy Golang app to Azure Web App
 
 on:
   push:
@@ -13,27 +13,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up GO
-        uses: actions/setup-go@v3
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
           go-version: 1.22
 
       - name: Build
-        run: go build -o build/go-app.exe -v
+        run: |
+          mkdir build
+          go build -o build/go-app.exe -v
 
       - name: Test
-        run: go test
-
-      - name: Install zip utility
-        run: sudo apt-get update && sudo apt-get install -y zip
+        run: go test ./...
 
       - name: Archive build artifacts
         run: |
           mkdir -p build/zip
           cp build/go-app.exe build/zip/
           cd build/zip
-          zip -r ../go-app.zip ./*
-        shell: bash
+          powershell Compress-Archive -Path * -DestinationPath ../go-app.zip
+        shell: pwsh
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-app
+          path: build/go-app.zip
 
   deploy:
     runs-on: windows-latest
@@ -45,18 +50,22 @@ jobs:
       id-token: write # This is required for requesting the JWT
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: go-app
+          path: build
 
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0D4AF94B3FA3427AAB2FC33B39A9EA50 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A2BA9D7D5EA94F7E93A91317AF9A8B90 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4CDDFE84D61642B1AA7A14141EB4AD22 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: go-azure-ait-test # Replace with your Azure Web App name
+          app-name: go-azure-ait-test
           package: build/go-app.zip
