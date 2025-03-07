@@ -20,8 +20,9 @@ jobs:
 
       - name: Build
         run: |
-          mkdir build
+          if (!(Test-Path -Path "build")) { mkdir build }
           go build -o build/go-app.exe -v
+        shell: pwsh
 
       - name: Test
         run: go test ./...
