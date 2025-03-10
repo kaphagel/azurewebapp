@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: |
           mkdir -p build
-          go build -o build/go-app.exe -v
+           GOOS=linux GOARCH=amd64 go build -o build/go-app -v
 
       - name: Test
         run: go test ./...
@@ -72,5 +72,5 @@ jobs:
         with:
           app-name: 'aitrest'
           slot-name: 'Production'
-          package: .
+          package: build/go-app.zip
           
