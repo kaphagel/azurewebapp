@@ -20,7 +20,7 @@ func main() {
 	port := os.Getenv("HTTP_PLATFORM_PORT")
 
 	if port == "" {
-		port = "8080"
+		port = "9000"
 	}
 	router.Run("0.0.0.0:" + port)
 }
