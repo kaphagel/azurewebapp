@@ -31,7 +31,7 @@ jobs:
       - name: Archive build artifacts
         run: |
           mkdir -p build/zip
-          cp build/go-app.exe build/zip/
+          cp build/go-app build/zip/
           cd build/zip
           zip -r ../go-app.zip .
         shell: bash
